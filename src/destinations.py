@@ -50,7 +50,7 @@ class pathFinder:
         if (place == "tunel"):
             return ['fosslv', 'stunel']
         if (place == "gorges" or place == "stunel"):
-            return ['tunel']
+            return ['tunel', 'gocamp']
         if (place == "auree" or place == "gogrum"):
             return ['chemin', 'gochut']
         if (place == "chemin"):
@@ -59,17 +59,19 @@ class pathFinder:
             return ['fleuve', 'chemin']
         if (place == "fleuve"):
             return ['collin', 'chemin']
-        if (place == "camp"):
+        if (place == "camp" or place == "gocamp"):
             return ['gogorg']
         if (place == "jungle"):
             return ['garde', 'fleuve']
         if (place == "garde"):
             return ['jungle']
         
+        return []
+        
     
     def goTo(self, dest, init):
         """
-            dest : destination aimed
+            dest : destination aimed in code
             init : start place
             return : the path to use to go to the place
         """
@@ -78,6 +80,7 @@ class pathFinder:
             return []
         
         paths = [[i] for i in self.getDestinations(init)]
+
         while (not dest in [i[-1] for i in paths]):
             paths = [p + [a] for p in paths for a in self.getDestinations(p[-1]) if not a in p]
             if paths == []:

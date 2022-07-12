@@ -19,21 +19,23 @@ class MissionAccomplisher:
         """
         def escalade():
             for d in self.dinos:
-                sk = self.bot.getSK(self.dinos[0])
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?sk={sk}")
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=talk;sk={sk}")
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=learn;sk={sk}")
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=fire;sk={sk}")
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=fire_fight;sk={sk}")
+                if not "fx_matesc" in self.bot.getItems(d):
+                    sk = self.bot.getSK(self.dinos[0])
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?sk={sk}")
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=talk;sk={sk}")
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=learn;sk={sk}")
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=fire;sk={sk}")
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=fire_fight;sk={sk}")
         
         
         def eau():
             for d in self.dinos:
-                sk = self.bot.getSK(self.dinos[0])
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?sk={sk}")
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=talk;sk={sk}")
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=learn_water;sk={sk}")
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=water_fight;sk={sk}")
+                if not "fx_bouee" in self.bot.getItems(d):
+                    sk = self.bot.getSK(self.dinos[0])
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?sk={sk}")
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=talk;sk={sk}")
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=learn_water;sk={sk}")
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/prof?goto=water_fight;sk={sk}")
         
         self.bot.goTo(self.dinos, "univ")
         escalade()
@@ -43,6 +45,9 @@ class MissionAccomplisher:
         """
             Aller chercher la pelle aux mines de corail
         """
+
+        if self.bot.hasItem(self.dinos, "fx_pelle"):
+            return
 
         self.bot.goTo(self.dinos, "corail")
         for d in self.dinos:
@@ -60,31 +65,45 @@ class MissionAccomplisher:
         """
 
         def repare():
+            if self.bot.hasItem(self.dinos, "fx_pelle"):
+                return
+
             self.bot.goTo(self.dinos, "corail")
             for d in self.dinos:
-                sk = self.bot.getSK(self.dinos[0])
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/mine?sk={sk}")
-                self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/mine?goto=repair;sk={sk}")
+                    sk = self.bot.getSK(self.dinos[0])
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/mine?sk={sk}")
+                    self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dialog/mine?goto=repair;sk={sk}")
 
         def dig():
             for d in self.dinos:
                 sk = self.bot.getSK(self.dinos[0])
                 self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dig?sk={sk}")
-            
-        self.bot.goTo(self.dinos, "marais")
-        dig()
-        repare()
-        self.bot.goTo(self.dinos, "fountj")
-        dig()
-        repare()
-        self.bot.goTo(self.dinos, "bslt")
-        dig()
+        
+        def hasGant(dinoId):
+            return self.bot.hasItem([dinoId], "fx_rasca")
+        
+
+        if not self.bot.hasItem(self.dinos, "fx_marais", hasGant):
+            repare()
+            self.bot.goTo(self.dinos, "marais")
+            dig()
+        if not self.bot.hasItem(self.dinos, "fx_wpure"):
+            repare()
+            self.bot.goTo(self.dinos, "fountj")
+            dig()
+        if not self.bot.hasItem(self.dinos, "fx_basalt"):
+            repare()
+            self.bot.goTo(self.dinos, "bslt")
+            dig()
     
     def domeAccess(self):
         """
             Récupère l'appeau à rascaphandre pour accéder au dôme sous la flotte
         """
         
+        if self.bot.hasItem(self.dinos, "fx_rasca"):
+            return
+
         self.bot.goTo(self.dinos, "chutes")
 
         # Parler Garde
@@ -112,6 +131,9 @@ class MissionAccomplisher:
         """
             Récupération du gant de zorc
         """
+        
+        if self.bot.hasItem(self.dinos, "fx_gant"):
+            return
 
         self.bot.goTo(self.dinos, "rasca")
         
@@ -128,6 +150,9 @@ class MissionAccomplisher:
         """
             Récupération de la feuille
         """
+        
+        if self.bot.hasItem(self.dinos, "fx_nenuph"):
+            return
 
         self.bot.goTo(self.dinos, "chutes")
         
@@ -145,6 +170,9 @@ class MissionAccomplisher:
         """
             Getting the lantern object
         """
+        
+        if self.bot.hasItem(self.dinos, "fx_lantrn"):
+            return
 
         self.bot.goTo(self.dinos, "collin")
         

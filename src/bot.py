@@ -22,7 +22,7 @@ class DinorpgApi:
             data = {
                 "login": logins[0],
                 "pass": logins[1],
-                "sid": "Tqh8V4kVMMlWC5Z50qK1iu7VnhhndHyp",
+                "sid": "zm66oaoqequFmYdfee2WZx46fnKyPQCr",
                 "keepSession": "on",
                 "submit": "Me+connecter",
                 "host": "www.dinorpg.com",
@@ -46,7 +46,7 @@ class DinorpgApi:
             self.session.get("http://www.dinorpg.com/tid/login?infos=oy5%3Aphashy32%3A5dcEy9wNox8iYw1TW82h6HIVuw7eWrA4y4%3Alangy2%3Afry4%3Anamey8%3Aluzzosany6%3Arightszy11%3AforceCreatefy6%3Aavatary75%3A%252F%252Fimgup.motion-twin.com%252Ftwinoid%252F3%252F3%252Fab93a10f_210418_100x100.gify6%3ArealIdi1374986y5%3Atokeny32%3A46d961cafd0721cc5f72d6440f207fd2y8%3Aredirectny6%3AtwinIdi210418g;chk=f5ba7e0658fdba7281321977c1a6c1c9")
         
         #Update sid form right cookie
-        self.sid = "KlHIrLUQgSE0rPlx4zOvRr8ZmFqvMx73"
+        self.sid = "k7GDNm6g280vFqtrDDUOmn9LN0gi7QqP"
         self.session.cookies.set("sid", self.sid)
 
 
@@ -272,10 +272,11 @@ class DinorpgApi:
     def goTo(self, dinoIds, dest):
         """
             dinoIds : array integer iding the dinos in party, first is leader (on element if alone)
-            dest : destination
+            dest : destination in code
             Go to a destination in group
         """
 
+    
         path = pathFinder().goTo(dest, self.getPlace(dinoIds[0]))
         self.traject(path, dinoIds)
     
@@ -307,9 +308,10 @@ class DinorpgApi:
         sk = self.getSK(leader)
         self.session.get(f"http://www.dinorpg.com/dino/{follower}/act/follow?f={leader};sk={sk}")
 
-    def newTeam(self):
+    def newTeam(self, name = "points"):
         """
             Buy 3 new dinoz, name them, make them follow each other
+            name : names of the dinoz of this new team
             return : id of the 3 dinoz of this new team (first one as leader)
         """
     
@@ -327,11 +329,101 @@ class DinorpgApi:
             link = BeautifulSoup(r.content, "html.parser").find(id = "detail_0").find(class_ = "button bSmall").get_attribute_list("href")[0]
             r = self.session.get(f"http://www.dinorpg.com{link}")
             dinoz[i] = getId(r)
-            self.session.post(f"http://www.dinorpg.com/dino/{dinoz[i]}/name", data = {"name": "points"})
+            self.session.post(f"http://www.dinorpg.com/dino/{dinoz[i]}/name", data = {"name": name})
         
         for i in range(1, 3):
             self.follow(dinoz[0], dinoz[i])
         
         return dinoz
-        
     
+    def getItems(self, dinoId):
+        """
+            dinoId : id of the dino it's getting the items from
+        """
+
+        r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}")
+        return [i.get_attribute_list("src")[0].replace("/img/icons/", "").replace(".gif", "") for i in BeautifulSoup(r.content, "html.parser").find(class_ = "fx").find_all()]
+    
+    def hasItem(self, dinoIds, item, or_ = None):
+        """
+            dinoIds : ids of the dinoz to be verified
+            item : item to be checked
+            or_ : condition on dinoId replacing not possessing the item
+            return : True if all the dinoz have the specified item, False otherwise
+        """
+
+        for d in dinoIds:
+            if not item in self.getItems(d) and (or_ == None or or_(d)):
+                return False
+        
+        return True
+
+    def isLeader(self, dinoId):
+        """
+            If the dino corresponding to the dinoId is the leader of a group, returns True, otherwise, returns False
+        """
+
+        a = BeautifulSoup(self.session.get("http://www.dinorpg.com").content, "html.parser").find(id = "dinozList").find_all("a")
+        for i in a:
+            if i.get_attribute_list("href")[0] == f"/dino/{dinoId}" and i.find(src = "/img/icons/small_leader.gif"):
+                return True
+        
+        return False
+    
+    def teamFromLeader(self, leader):
+        """
+            leader : id of the dinoz leader of a group
+            return : a list of each of all dinos in the group
+        """
+        
+
+        if not self.isLeader(leader):
+            return False
+        team = [leader]
+
+        # To avoid for the selected dinoz to be on top of the list
+        dinoz = self.getDinoz()
+        if len(dinoz) > 2:
+            self.session.get(f"http://www.dinorpg.com/dino/{dinoz[-1]}")
+            self.session.get(f"http://www.dinorpg.com/dino/{dinoz[1]}")
+
+        a = BeautifulSoup(self.session.get("http://www.dinorpg.com").content, "html.parser").find(id = "dinozList").find_all("a")
+        start = False
+
+        for i in a:
+            if start:
+                if i.find(src = "/img/icons/small_follow.gif"):
+                    team.append(i.get_attribute_list("href")[0][6:])
+                else:
+                    return team
+            if i.get_attribute_list("href")[0] == f"/dino/{leader}":
+                start = True
+            
+
+    def getName(self, dinoId):
+        """
+            return the name of a dino from its id
+        """
+
+        r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}")
+        return BeautifulSoup(r.content, "html.parser").find(class_ = "dinoz").find(class_ = "title").text
+    
+    def getPointsTeam(self, name = "points"):
+        """
+            name : names of the dinoz of the team searched, only a string
+            This function is used to get a leftout form zero to the end team
+
+            Only return a team of 3 for now
+        """
+
+        for d in self.getDinoz():
+            if self.getName(d) == name and self.isLeader(d):
+                return self.teamFromLeader(d)
+        
+        return False
+            
+
+
+
+
+
