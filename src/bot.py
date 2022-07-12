@@ -9,6 +9,9 @@ class DinorpgApi:
 
     def __init__(self) -> None:
         self.session = req.session()
+ 
+        with open("./src/.env", "r") as f:
+            logins = [line.replace("\n", "") for line in f.readlines()]
 
         # Find connexion sid
         # some = BeautifulSoup(self.session.get("http://www.dinorpg.com").content, "html.parser").find(id = "hiddenVars").get_attribute_list("value")
@@ -17,9 +20,9 @@ class DinorpgApi:
         # Connexion
         r = self.session.post("https://twinoid.com/user/login/" ,
             data = {
-                "login": "",
-                "pass": "",
-                "sid": "",
+                "login": logins[0],
+                "pass": logins[1],
+                "sid": "Tqh8V4kVMMlWC5Z50qK1iu7VnhhndHyp",
                 "keepSession": "on",
                 "submit": "Me+connecter",
                 "host": "www.dinorpg.com",
