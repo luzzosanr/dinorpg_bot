@@ -4,6 +4,10 @@ from src.missions import MissionAccomplisher
 from bs4 import BeautifulSoup
 import requests as req
 
+"""
+    Going to level 25 and to be frozen
+"""
+
 bot = DinorpgApi()
 
 while bot.getPointsTeam():
