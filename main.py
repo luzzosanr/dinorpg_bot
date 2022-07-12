@@ -1,3 +1,4 @@
+import io
 from src.bot import DinorpgApi
 from src.destinations import pathFinder
 from src.missions import MissionAccomplisher
@@ -13,11 +14,4 @@ bot = DinorpgApi()
 
 acc = MissionAccomplisher(teams[0])
 
-acc.ingredients()
-acc.domeAccess()
-acc.zorc()
-acc.getFeuille()
-acc.getLanterne()
-
-# with open("test.html", "w") as f:
-#     f.write(r.text)
+print(bot.getLevel(teams[0][0]))
