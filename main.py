@@ -16,5 +16,5 @@ bot = DinorpgApi()
 # while isWorking():
 #    pass
 
-bot.goTo(["2608145"], "gorges")
-    
+acc = MissionAccomplisher(["2608719", "2608720", "2608721"])
+acc.fromZero_toTheEnd()
