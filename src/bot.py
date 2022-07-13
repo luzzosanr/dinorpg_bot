@@ -199,6 +199,8 @@ class DinorpgApi:
         if "missions" in dinoz:
             dinoz.remove("missions")
 
+        return dinoz
+
     def isInventory(self, dino = None):
         """
             Making the session player look in inventory
