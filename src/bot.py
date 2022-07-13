@@ -112,17 +112,25 @@ class DinorpgApi:
     def checks(self, dinoIds):
         """
             dinoIds : array integer iding the dinos in party, first is leader (on element if alone)
-            Checking health and level up and act on it
+            Checking things between actions and act on it
+            Returns True if everything was ok, False otherwise
         """
         
-        #Checking dinos : levelup and food
+        #Checking dinos : levelup, food and death
         for id in dinoIds:
-
+            if self.isDead(id):
+                self.revive(id)
+                return False
             lu = self.checkLevelUp(id)
             if (lu):
                 self.simpleLevelup(id, lu)
+                return False
             if (self.checkFood(id) >= 30):
                 self.eat30(id)
+                return False
+        
+        return True
+            
 
     def partySimpleAction(self, dinoIds):
         """
@@ -130,7 +138,8 @@ class DinorpgApi:
             Fight and levelup with simple choice or eat when needed (in party)
         """
 
-        self.checks(dinoIds)
+        while not self.checks(dinoIds):
+            pass
 
         #Making dino fight
         self.fight(dinoIds[0])
@@ -151,41 +160,41 @@ class DinorpgApi:
             Eat some tarte à la viande and refill if necessary
         """
 
-        self.isInventory(dinoId)
-
         #Reloading food
-        if (not self.foodStock30()):
-            self.reloadFood30()
+        if (not self.isStock("item_3")):
+            self.reloadItem("3")
 
+        self.isInventory(dinoId)
         r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}/")
         link = BeautifulSoup(r.content, "html.parser").find(id = "inv_tartev_use").get_attribute_list("href")[0]
         self.session.get("http://www.dinorpg.com" + link)
     
-    def reloadFood30(self, num = "24"):
+    def reloadItem(self, item_num, num = "24"):
         """
             num (string) : quanity that need to be bought, default 24, maximum from 0
-            Reload tarte à la viande buying in shop
+            item_num : the number of the item in shop as a string
+            Reload the item buying in shop
         """
         
         self.isInventory()
         r = self.session.get(f"http://www.dinorpg.com/shop")
-        action = BeautifulSoup(r.content, "html.parser").find(id = "form_3").get_attribute_list("action")[0]
+        action = BeautifulSoup(r.content, "html.parser").find(id = f"form_{item_num}").get_attribute_list("action")[0]
         r = self.session.post(f"http://www.dinorpg.com" + action,
             data = {
-                "oindex": "3",
-                "chk": self.sid,
+                "oindex": item_num,
+                "chk": self.sid, 
                 "qty": num
             }
         )
     
-    def foodStock30(self):
+    def isStock(self, item):
         """
-            return True if there is tarte left
+            Returns True if there is some of the item left
+            Only works on items of the shop
         """
 
-        self.isInventory()
         r = self.session.get(f"http://www.dinorpg.com/shop")
-        stock = BeautifulSoup(r.content, "html.parser").find(id = "item_3").find().text.replace("\t", "").replace("\n", "").split("/")[0]
+        stock = BeautifulSoup(r.content, "html.parser").find(id = item).find().text.replace("\t", "").replace("\n", "").split("/")[0]
         return (stock != "\r0")
     
     def getDinoz(self):
@@ -238,7 +247,8 @@ class DinorpgApi:
         """
 
         for d in path:
-            self.checks(dinoIds)
+            while not self.checks(dinoIds):
+                pass
             self.move(d, dinoIds[0])
 
     def getLevel(self, dinoId):
@@ -432,7 +442,45 @@ class DinorpgApi:
                 return self.teamFromLeader(d)
         
         return False
+    
+    def isDead(self, dinoId):
+        """
+            Checking if the dino corresponding to the id is dead
+        """
+        
+        r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}")
+
+        # Return the dead indicator is there
+        if BeautifulSoup(r.content, "html.parser").find(id = "act_resurrect"):
+            return True
+        return False
+    
+    def revive(self, dinoId):
+        """
+            Reviving a dino, throw an error if not dead
+        """
+
+        def stopResting():
+            # Getting sk
+            r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}")
+            sk = BeautifulSoup(r.content, "html.parser").find(id = "act_stop_heal").find().get_attribute_list("onclick")[0].split("=")[-2][:-5]
             
+            # Actual stop resting
+            r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}/act/stop_heal?sk={sk};ajax=1")
+
+        #Reloading potions
+        if (not self.isStock("item_1")):
+            self.reloadItem("1", "12")
+        
+        # Getting sk
+        r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}")
+        sk = BeautifulSoup(r.content, "html.parser").find(id = "act_resurrect").find().get_attribute_list("onclick")[0].split("=")[-1][:-2]
+        
+        # Actual resurrection
+        r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}/act/resurrect?angel=1;sk={sk}")
+
+        stopResting()
+
 
 
 
