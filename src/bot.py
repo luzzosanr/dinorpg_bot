@@ -12,6 +12,9 @@ class DinorpgApi:
  
         with open("./src/.env", "r") as f:
             logins = [line.replace("\n", "") for line in f.readlines()]
+        
+        with open("./src/.sid", "r") as f:
+            sids = [line.replace("\n", "") for line in f.readlines()]
 
         # Find connexion sid
         # some = BeautifulSoup(self.session.get("http://www.dinorpg.com").content, "html.parser").find(id = "hiddenVars").get_attribute_list("value")
@@ -22,7 +25,7 @@ class DinorpgApi:
             data = {
                 "login": logins[0],
                 "pass": logins[1],
-                "sid": "zm66oaoqequFmYdfee2WZx46fnKyPQCr",
+                "sid": sids[0],
                 "keepSession": "on",
                 "submit": "Me+connecter",
                 "host": "www.dinorpg.com",
@@ -46,7 +49,7 @@ class DinorpgApi:
             self.session.get("http://www.dinorpg.com/tid/login?infos=oy5%3Aphashy32%3A5dcEy9wNox8iYw1TW82h6HIVuw7eWrA4y4%3Alangy2%3Afry4%3Anamey8%3Aluzzosany6%3Arightszy11%3AforceCreatefy6%3Aavatary75%3A%252F%252Fimgup.motion-twin.com%252Ftwinoid%252F3%252F3%252Fab93a10f_210418_100x100.gify6%3ArealIdi1374986y5%3Atokeny32%3A46d961cafd0721cc5f72d6440f207fd2y8%3Aredirectny6%3AtwinIdi210418g;chk=f5ba7e0658fdba7281321977c1a6c1c9")
         
         #Update sid form right cookie
-        self.sid = "zgWxlqrGzVYGgcGMcHefZJXU9I0WGeBy"
+        self.sid = sids[1]
         self.session.cookies.set("sid", self.sid)
 
 
