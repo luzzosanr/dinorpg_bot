@@ -213,10 +213,10 @@ class MissionAccomplisher:
     def fromZero_toTheEnd(self):
         """
             dinoIds: dinos making it
-            Making dinos go from any level to at least 25 and freezed
+            Making dinos go from any level to at least 19 and freezed
         """
 
-        self.bot.goToLevel(self.dinos, 25)
+        self.bot.goToLevel(self.dinos, 19)
                 
         self.profEugene()
         self.pelle()
