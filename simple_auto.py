@@ -10,11 +10,15 @@ import requests as req
 
 bot = DinorpgApi()
 
+name = input("Enter the name of the dinoz :\n")
+if name == "":
+    name = "points"
+
 while bot.getPointsTeam():
-    acc = MissionAccomplisher(bot.getPointsTeam())
+    acc = MissionAccomplisher(bot.getPointsTeam(name))
     acc.fromZero_toTheEnd()
 
 
 while True:
-    acc = MissionAccomplisher(bot.newTeam())
+    acc = MissionAccomplisher(bot.newTeam(name))
     acc.fromZero_toTheEnd()
