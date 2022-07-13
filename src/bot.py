@@ -46,7 +46,7 @@ class DinorpgApi:
             self.session.get("http://www.dinorpg.com/tid/login?infos=oy5%3Aphashy32%3A5dcEy9wNox8iYw1TW82h6HIVuw7eWrA4y4%3Alangy2%3Afry4%3Anamey8%3Aluzzosany6%3Arightszy11%3AforceCreatefy6%3Aavatary75%3A%252F%252Fimgup.motion-twin.com%252Ftwinoid%252F3%252F3%252Fab93a10f_210418_100x100.gify6%3ArealIdi1374986y5%3Atokeny32%3A46d961cafd0721cc5f72d6440f207fd2y8%3Aredirectny6%3AtwinIdi210418g;chk=f5ba7e0658fdba7281321977c1a6c1c9")
         
         #Update sid form right cookie
-        self.sid = "k7GDNm6g280vFqtrDDUOmn9LN0gi7QqP"
+        self.sid = "qx3YLWvcOIzUKutIuAI9yo36FV7Tm84I"
         self.session.cookies.set("sid", self.sid)
 
 
@@ -115,10 +115,6 @@ class DinorpgApi:
         #Checking dinos : levelup and food
         for id in dinoIds:
 
-            #Reloading food
-            if (not self.foodStock30()):
-                self.reloadFood30()
-
             lu = self.checkLevelUp(id)
             if (lu):
                 self.simpleLevelup(id, lu)
@@ -142,7 +138,6 @@ class DinorpgApi:
             return : hp missing
         """
 
-        self.isInventory(dinoId)
         r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}")
         food = BeautifulSoup(r.content, "html.parser").find(class_ = "lifetext").text.split(" ")
         return int(food[2]) - int(food[0])
@@ -154,6 +149,11 @@ class DinorpgApi:
         """
 
         self.isInventory(dinoId)
+
+        #Reloading food
+        if (not self.foodStock30()):
+            self.reloadFood30()
+
         r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}/")
         link = BeautifulSoup(r.content, "html.parser").find(id = "inv_tartev_use").get_attribute_list("href")[0]
         self.session.get("http://www.dinorpg.com" + link)

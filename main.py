@@ -6,11 +6,13 @@ import requests as req
 
 bot = DinorpgApi()
 
-while bot.getPointsTeam():
-    acc = MissionAccomplisher(bot.getPointsTeam())
-    acc.fromZero_toTheEnd()
+def r():
+    return bot.session.get(f"http://www.dinorpg.com/shop")
 
+i = 0
+while BeautifulSoup(r().content, "html.parser").find(id = "item_3"):
+    i += 1
 
-while True:
-    acc = MissionAccomplisher(bot.newTeam())
-    acc.fromZero_toTheEnd()
+print(i)
+
+    
