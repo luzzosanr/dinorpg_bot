@@ -46,7 +46,7 @@ class DinorpgApi:
             self.session.get("http://www.dinorpg.com/tid/login?infos=oy5%3Aphashy32%3A5dcEy9wNox8iYw1TW82h6HIVuw7eWrA4y4%3Alangy2%3Afry4%3Anamey8%3Aluzzosany6%3Arightszy11%3AforceCreatefy6%3Aavatary75%3A%252F%252Fimgup.motion-twin.com%252Ftwinoid%252F3%252F3%252Fab93a10f_210418_100x100.gify6%3ArealIdi1374986y5%3Atokeny32%3A46d961cafd0721cc5f72d6440f207fd2y8%3Aredirectny6%3AtwinIdi210418g;chk=f5ba7e0658fdba7281321977c1a6c1c9")
         
         #Update sid form right cookie
-        self.sid = "qx3YLWvcOIzUKutIuAI9yo36FV7Tm84I"
+        self.sid = "zgWxlqrGzVYGgcGMcHefZJXU9I0WGeBy"
         self.session.cookies.set("sid", self.sid)
 
 
@@ -348,12 +348,12 @@ class DinorpgApi:
         """
             dinoIds : ids of the dinoz to be verified
             item : item to be checked
-            or_ : condition on dinoId replacing not possessing the item
+            or_ : condition on dinoId replacing possessing the item
             return : True if all the dinoz have the specified item, False otherwise
         """
 
         for d in dinoIds:
-            if not item in self.getItems(d) and (or_ == None or or_(d)):
+            if not item in self.getItems(d) and (or_ == None or not or_(d)):
                 return False
         
         return True
