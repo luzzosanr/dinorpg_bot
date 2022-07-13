@@ -309,7 +309,15 @@ class DinorpgApi:
         """
 
         r = self.session.get(f"http://www.dinorpg.com/dino/{dinoId}/")
-        return BeautifulSoup(r.content, "html.parser").find(id = "act_fight").find().get_attribute_list("onclick")[0].split('=')[-1][:-2]
+        sp = BeautifulSoup(r.content, "html.parser").find(id = "dinozActions").find("table").find().get_attribute_list("onclick")[0].split('=')
+
+        isNextSk = False
+        for i in sp:
+            if isNextSk:
+                return i[:8]
+            if i[-2:] == "sk":
+                isNextSk = True
+
     
     def dissolvGroup(self, dinoId):
         """
