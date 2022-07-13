@@ -6,13 +6,15 @@ import requests as req
 
 bot = DinorpgApi()
 
-def r():
-    return bot.session.get(f"http://www.dinorpg.com/shop")
+# def isWorking():
+#     r = bot.session.get(f"http://www.dinorpg.com/shop")
+#     if BeautifulSoup(r.content, "html.parser").find(id = "item_3"):
+#         return True
+#     print(r)
+#     return False
 
-i = 0
-while BeautifulSoup(r().content, "html.parser").find(id = "item_3"):
-    i += 1
+# while isWorking():
+#    pass
 
-print(i)
-
+bot.goTo(["2608145"], "gorges")
     

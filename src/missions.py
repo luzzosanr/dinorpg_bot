@@ -80,18 +80,18 @@ class MissionAccomplisher:
                 self.bot.session.get(f"http://www.dinorpg.com/dino/{d}/act/dig?sk={sk}")
         
         def hasGant(dinoId):
-            return self.bot.hasItem([dinoId], "fx_rasca")
+            return self.bot.hasItem([dinoId], "fx_gant")
         
 
         if not self.bot.hasItem(self.dinos, "fx_marais", hasGant):
             repare()
             self.bot.goTo(self.dinos, "marais")
             dig()
-        if not self.bot.hasItem(self.dinos, "fx_wpure"):
+        if not self.bot.hasItem(self.dinos, "fx_wpure", hasGant):
             repare()
             self.bot.goTo(self.dinos, "fountj")
             dig()
-        if not self.bot.hasItem(self.dinos, "fx_basalt"):
+        if not self.bot.hasItem(self.dinos, "fx_basalt", hasGant):
             repare()
             self.bot.goTo(self.dinos, "bslt")
             dig()
