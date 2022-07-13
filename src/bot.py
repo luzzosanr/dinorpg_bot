@@ -191,7 +191,13 @@ class DinorpgApi:
         """
         
         a = BeautifulSoup(self.session.get("http://www.dinorpg.com").content, "html.parser").find(id = "dinozList").find_all("a")
-        return [i.get_attribute_list("href")[0][6:] for i in a if i.get_attribute_list("href")[0][:6] == '/dino/']
+        dinoz = [i.get_attribute_list("href")[0][6:] for i in a if i.get_attribute_list("href")[0][:6] == '/dino/']
+
+        # Removing overview and missions
+        if "overwiew" in dinoz:
+            dinoz.remove("overview")
+        if "missions" in dinoz:
+            dinoz.remove("missions")
 
     def isInventory(self, dino = None):
         """
