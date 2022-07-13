@@ -14,7 +14,7 @@ name = input("Enter the name of the dinoz :\n")
 if name == "":
     name = "points"
 
-while bot.getPointsTeam():
+while bot.getPointsTeam(name):
     acc = MissionAccomplisher(bot.getPointsTeam(name))
     acc.fromZero_toTheEnd()
 
