@@ -197,7 +197,7 @@ class DinorpgApi:
         dinoz = [i.get_attribute_list("href")[0][6:] for i in a if i.get_attribute_list("href")[0][:6] == '/dino/']
 
         # Removing overview and missions
-        if "overwiew" in dinoz:
+        if "overview" in dinoz:
             dinoz.remove("overview")
         if "missions" in dinoz:
             dinoz.remove("missions")
